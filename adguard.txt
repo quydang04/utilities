@@ -26,10 +26,11 @@
 @@||microsoft.com^
 @@||vnnic.vn^
 @@||inet.com.vn^
-@@||apple.com^
-@@||nextdns.io^
+@@||apple.com^$important
+@@||nextdns.io^$important
 @@||fbcdn.net^
 @@||translate.google.com^$important
 @@||yandex.com^
 @@||vnshare.top^
-@@||urban-vpn.com^
+@@||urban-vpn.com^$important
+@@||www.gravatar.com^$important
