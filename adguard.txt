@@ -33,4 +33,6 @@
 @@||yandex.com^
 @@||vnshare.top^
 @@||urban-vpn.com^$important
-@@||www.gravatar.com^$important
+@@||gravatar.com^$important
+@@||cdn.ampproject.org^$important
+@@||gvt2.com^$important
