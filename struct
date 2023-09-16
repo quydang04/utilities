@@ -1,6 +1,6 @@
-#include <iostream>
-#include <cstring>
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct SinhVien {
     char ma[10];
@@ -9,30 +9,48 @@ struct SinhVien {
 };
 
 struct node {
-    SinhVien data;
-    node *next;
+    struct SinhVien data;
+    struct node* next;
 };
 
-void ThemSV(node *&head, SinhVien sv) {
-    node *newNode = new node;
+void nhapSV(struct node** head, struct SinhVien sv) {
+    struct node* newNode = (struct node*)malloc(sizeof(struct node));
     newNode->data = sv;
-    newNode->next = head;
-    head = newNode;
+    newNode->next = *head;
+    *head = newNode;
 }
 
-void XoaSVMa(node *&head, char maX[]) {
-    node *current = head;
-    node *prev = NULL;
+void timSVDTB5(struct node* head) {
+    struct node* current = head;
+    int found = 0;
+
+    while (current != NULL) {
+        if (current->data.dtb > 5.0) {
+            found = 1;
+            printf("MSSV: %s, Ten: %s, DTB: %.2f\n", current->data.ma, current->data.ten, current->data.dtb);
+        }
+
+        current = current->next;
+    }
+
+    if (!found) {
+        printf("Khong tim thay sinh vien nao co diem trung binh lon hon 5.\n");
+    }
+}
+
+void XoaSVMa(struct node** head, char maX[]) {
+    struct node* current = *head;
+    struct node* prev = NULL;
     while (current != NULL) {
         if (strcmp(current->data.ma, maX) == 0) {
             if (prev != NULL) {
                 prev->next = current->next;
-                delete current;
+                free(current);
                 current = prev->next;
             } else {
-                head = current->next;
-                delete current;
-                current = head;
+                *head = current->next;
+                free(current);
+                current = *head;
             }
         } else {
             prev = current;
@@ -41,19 +59,19 @@ void XoaSVMa(node *&head, char maX[]) {
     }
 }
 
-void XoaSVTen(node *&head, char tenX[]) {
-    node *current = head;
-    node *prev = NULL;
+void XoaSVTen(struct node** head, char tenX[]) {
+    struct node* current = *head;
+    struct node* prev = NULL;
     while (current != NULL) {
         if (strcmp(current->data.ten, tenX) == 0) {
             if (prev != NULL) {
                 prev->next = current->next;
-                delete current;
+                free(current);
                 current = prev->next;
             } else {
-                head = current->next;
-                delete current;
-                current = head;
+                *head = current->next;
+                free(current);
+                current = *head;
             }
         } else {
             prev = current;
@@ -62,14 +80,14 @@ void XoaSVTen(node *&head, char tenX[]) {
     }
 }
 
-void SapXepTheoMa(node *&head) {
-    if (head == NULL || head->next == NULL) {
+void SapXepTheoMa(struct node** head) {
+    if (*head == NULL || (*head)->next == NULL) {
         return;
     }
 
-    node *current = head;
-    node *nextNode = NULL;
-    SinhVien temp;
+    struct node* current = *head;
+    struct node* nextNode = NULL;
+    struct SinhVien temp;
 
     while (current != NULL) {
         nextNode = current->next;
@@ -88,21 +106,21 @@ void SapXepTheoMa(node *&head) {
     }
 }
 
-void InDanhSachKha(node *head) {
-    node *current = head;
+void InDanhSachKha(struct node* head) {
+    struct node* current = head;
 
     while (current != NULL) {
         if (current->data.dtb >= 6.5 && current->data.dtb <= 7.9) {
-            cout << "MSSV: " << current->data.ma << ", Ten: " << current->data.ten << ", DTB: " << current->data.dtb << endl;
+            printf("MSSV: %s, Ten: %s, DTB: %.2f\n", current->data.ma, current->data.ten, current->data.dtb);
         }
 
         current = current->next;
     }
 }
 
-SinhVien TimSVMax(node *head) {
-    node *current = head;
-    SinhVien svMax;
+struct SinhVien TimSVMax(struct node* head) {
+    struct node* current = head;
+    struct SinhVien svMax;
     svMax.dtb = -1;
 
     while (current != NULL) {
@@ -116,9 +134,9 @@ SinhVien TimSVMax(node *head) {
     return svMax;
 }
 
-SinhVien TimSVMinGioi(node* head) {
-    node* current = head;
-    SinhVien svMin;
+struct SinhVien TimSVMinGioi(struct node* head) {
+    struct node* current = head;
+    struct SinhVien svMin;
     svMin.dtb = 10;
 
     while (current != NULL) {
@@ -132,110 +150,95 @@ SinhVien TimSVMinGioi(node* head) {
     return svMin;
 }
 
-void timSVDTB5(node* head) {
-    node *current = head;
-    bool found = false;
-
-    while (current != NULL) {
-        if (current->data.dtb > 5.0) {
-            found = true;
-            cout << "MSSV: " << current->data.ma << ", Ten: " << current->data.ten << ", DTB: " << current->data.dtb << endl;
-        }
-
-        current = current->next;
-    }
-
-    if (!found) {
-        cout << "Khong tim thay sinh vien nao co diem trung binh lon hon 5.\n";
-    }
-}
-
-SinhVien NhapSV() {
-    SinhVien sv;
-    cout << "Nhap ma SV: ";
-    cin >> sv.ma;
-    cout << "Nhap ten SV: ";
-    cin.ignore();
-    cin.getline(sv.ten, 40);
-    cout << "Nhap DTB: ";
-    cin >> sv.dtb;
+struct SinhVien NhapSV() {
+    struct SinhVien sv;
+    printf("Nhap ma SV: ");
+    scanf("%s", sv.ma);
+    printf("Nhap ten SV: ");
+    scanf("%s", sv.ten);
+    printf("Nhap DTB: ");
+    scanf("%f", &sv.dtb);
     return sv;
 }
 
-void XuatSV(SinhVien sv) {
-    cout << "MSSV: " << sv.ma << ", Ten: " << sv.ten << ", DTB: " << sv.dtb << endl;
+void XuatSV(struct SinhVien sv) {
+    printf("MSSV: %s, Ten: %s, DTB: %.2f\n", sv.ma, sv.ten, sv.dtb);
 }
 
 int main() {
-    node* head = NULL;
+    struct node* head = NULL;
     int chon;
 
     do {
-        cout << "\n------ MENU ------\n";
-        cout << "1. Them sinh vien\n";
-        cout << "2. Xoa sinh vien theo ma\n";
-        cout << "3. Xoa tat ca sinh vien theo ten\n";
-        cout << "4. Sap xep danh sach theo ma SV\n";
-        cout << "5. In danh sach sinh vien dat loai kha\n";
-        cout << "6. Tim SV co DTB cao nhat\n";
-        cout << "7. Tim SV co DTB thap nhat trong cac SV xep loai gioi\n";
-        cout << "8. Xuat sinh vien co diem trung binh lon hon 5\n";
-        cout << "9. Xuat danh sach sinh vien\n";
-        cout << "0. Thoat\n";
-        cout << "Chon: ";
-        cin >> chon;
+        printf("\n------ MENU ------\n");
+        printf("1. Them sinh vien\n");
+        printf("2. Xoa sinh vien theo ma\n");
+        printf("3. Xoa tat ca sinh vien theo ten\n");
+        printf("4. Sap xep danh sach theo ma SV\n");
+        printf("5. In danh sach sinh vien dat loai kha\n");
+        printf("6. Tim SV co DTB cao nhat\n");
+        printf("7. Tim SV co DTB thap nhat trong cac SV xep loai gioi\n");
+        printf("8. Xuat sinh vien co diem trung binh lon hon 5\n");
+        printf("9. Xuat danh sach sinh vien\n");
+        printf("0. Thoat\n");
+        printf("Chon: ");
+        scanf("%d", &chon);
 
         switch (chon) {
             case 1: {
-                SinhVien sv = NhapSV();
-                ThemSV(head, sv);
+                int n;
+                printf("Nhap so luong sinh vien can them: ");
+                scanf("%d", &n);
+                for (int i = 0; i < n; i++) {
+                    struct SinhVien sv = NhapSV();
+                    nhapSV(&head, sv);
+                }
                 break;
             }
             case 2: {
                 char maX[10];
-                cout << "Nhap ma SV can xoa: ";
-                cin >> maX;
-                XoaSVMa(head, maX);
+                printf("Nhap ma SV can xoa: ");
+                scanf("%s", maX);
+                XoaSVMa(&head, maX);
                 break;
             }
             case 3: {
                 char tenX[40];
-                cout << "Nhap ten SV can xoa: ";
-                cin.ignore();
-                cin.getline(tenX, 40);
-                XoaSVTen(head, tenX);
+                printf("Nhap ten SV can xoa: ");
+                scanf("%s", tenX);
+                XoaSVTen(&head, tenX);
                 break;
             }
             case 4: {
-                SapXepTheoMa(head);
-                cout << "Danh sach da sap xep theo ma SV.\n";
+                SapXepTheoMa(&head);
+                printf("Danh sach da sap xep theo ma SV.\n");
                 break;
             }
             case 5: {
-                cout << "Danh sach sinh vien dat loai kha:\n";
+                printf("Danh sach sinh vien dat loai kha:\n");
                 InDanhSachKha(head);
                 break;
             }
             case 6: {
-                SinhVien svMax = TimSVMax(head);
-                cout << "Sinh vien co DTB cao nhat:\n";
+                struct SinhVien svMax = TimSVMax(head);
+                printf("Sinh vien co DTB cao nhat:\n");
                 XuatSV(svMax);
                 break;
             }
             case 7: {
-                SinhVien svMinGioi = TimSVMinGioi(head);
-                cout << "Sinh vien co DTB thap nhat trong cac SV xep loai gioi:\n";
+                struct SinhVien svMinGioi = TimSVMinGioi(head);
+                printf("Sinh vien co DTB thap nhat trong cac SV xep loai gioi:\n");
                 XuatSV(svMinGioi);
                 break;
             }
             case 8: {
-            	cout << "Sinh vien co diem trung binh lon hon 5 la: " << endl;
-            	timSVDTB5(head);
-				break;
-			}
+                printf("Sinh vien co diem trung binh lon hon 5 la: \n");
+                timSVDTB5(head);
+                break;
+            }
             case 9: {
-                cout << "Danh sach sinh vien:\n";
-                node* current = head;
+                printf("Danh sach sinh vien:\n");
+                struct node* current = head;
                 while (current != NULL) {
                     XuatSV(current->data);
                     current = current->next;
@@ -243,17 +246,16 @@ int main() {
                 break;
             }
             case 0: {
-                cout << "Da thoat chuong trinh!";
+                printf("Da thoat chuong trinh!");
                 while (head != NULL) {
-                	cout << "Da thoat chuong trinh\n";
-                    node* temp = head;
+                    struct node* temp = head;
                     head = temp->next;
-                    delete temp;
+                    free(temp);
                 }
                 break;
             }
             default:
-                cout << "Lua chon khong hop le. Vui long chon lai.\n";
+                printf("Lua chon khong hop le. Vui long chon lai.\n");
         }
     } while (chon != 0);
 
