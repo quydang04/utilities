@@ -1,26 +1,26 @@
-#include <iostream>
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
 
-struct node {
+struct Node {
     int data;
-    node *next;
+    struct Node* next;
 };
 
-node *makeNode(int n) {
-    node *newNode = new node;
+struct Node* makeNode(int n) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = n;
     newNode->next = NULL;
     return newNode;
 }
 
-void duyet(node *head) {
+void duyet(struct Node* head) {
     while (head != NULL) {
-        cout << head->data << " ";
+        printf("%d ", head->data);
         head = head->next;
     }
 }
 
-int countNode(node *head, int n) {
+int countNode(struct Node* head) {
     int dem = 0;
     while (head != NULL) {
         dem++;
@@ -29,11 +29,11 @@ int countNode(node *head, int n) {
     return dem;
 }
 
-void pushBack(node *&head, int n) {
-    node *newNode = makeNode(n);
-    node *temp = head;
-    if (head == NULL) {
-        head = newNode;
+void pushBack(struct Node** head, int n) {
+    struct Node* newNode = makeNode(n);
+    struct Node* temp = *head;
+    if (*head == NULL) {
+        *head = newNode;
         return;
     }
     if (temp->next == NULL) {
@@ -46,42 +46,42 @@ void pushBack(node *&head, int n) {
     temp->next = newNode;
 }
 
-void insertList(node *&head) {
+void insertList(struct Node** head) {
     int n;
-    cout << "Nhap so luong phan tu: ";
-    cin >> n;
-    cout << "Nhap cac phan tu: ";
+    printf("Nhap so luong phan tu: ");
+    scanf("%d", &n);
+    printf("Nhap cac phan tu: ");
     for (int i = 0; i < n; i++) {
         int x;
-        cin >> x;
+        scanf("%d", &x);
         pushBack(head, x);
     }
 }
 
-void chenptu(node *&head, int n, int x, int y) {
-    node *temp = head;
-    if (head == NULL) {
+void chenptu(struct Node** head, int x, int y) {
+    struct Node* temp = *head;
+    if (*head == NULL) {
         return;
     }
-    
-    while (temp) {
+
+    while (temp != NULL) {
         if (temp->data == x) {
-            node *newNode = makeNode(y);
+            struct Node* newNode = makeNode(y);
             newNode->next = temp->next;
             temp->next = newNode;
-            cout << "Da chen " << y << " sau " << x << endl;
+            printf("Da chen %d sau %d\n", y, x);
             return;
         }
         temp = temp->next;
     }
 
-    cout << "Khong tim thay phan tu co gia tri " << x << " trong danh sach." << endl;
+    printf("Khong tim thay phan tu co gia tri %d trong danh sach.\n", x);
 }
 
-int valueK(node *head, int k) {
-    node *temp = head;
+int valueK(struct Node* head, int k) {
+    struct Node* temp = head;
     int dem = 0;
-    
+
     while (temp != NULL) {
         if (dem == k) {
             return temp->data;
@@ -89,18 +89,18 @@ int valueK(node *head, int k) {
         temp = temp->next;
         dem++;
     }
-    
+
     return -1;
 }
 
-int findMin(node *head) {
+int findMin(struct Node* head) {
     if (head == NULL) {
-        cout << "Danh sach lien ket rong." << endl;
-        return -1; 
+        printf("Danh sach lien ket rong.\n");
+        return -1;
     }
 
     int minVal = head->data;
-    node *temp = head->next;
+    struct Node* temp = head->next;
 
     while (temp != NULL) {
         if (temp->data < minVal) {
@@ -112,67 +112,128 @@ int findMin(node *head) {
     return minVal;
 }
 
-void deleteFirst(node *&head, int z) {
-    if (head == NULL) {
+void deleteFirst(struct Node** head, int z) {
+    if (*head == NULL) {
         return;
     }
 
-    if (head->data == z) {
-        node *temp = head;
-        head = head->next;
-        delete temp;
+    if ((*head)->data == z) {
+        struct Node* temp = *head;
+        *head = (*head)->next;
+        free(temp);
         return;
     }
 
-    node *prev = head;
-    node *current = head->next;
+    struct Node* prev = *head;
+    struct Node* current = (*head)->next;
 
     while (current != NULL) {
         if (current->data == z) {
             prev->next = current->next;
-            delete current;
-            return; 
+            free(current);
+            return;
         }
         prev = current;
         current = current->next;
     }
+}
 
-    
+void sort(struct Node* head) {
+    struct Node* temp = head;
+    if (head == NULL) {
+        return;
+    }
+    while (temp->next != NULL) {
+        struct Node* index = temp->next;
+        while (index != NULL) {
+            if (index->data < temp->data) {
+                int tam = temp->data;
+                temp->data = index->data;
+                index->data = tam;
+            }
+            index = index->next;
+        }
+        temp = temp->next;
+    }
 }
 
 int main() {
-    node *head = NULL;
-    int n, x, y, k, z;
-    insertList(head);
-    cout << "Danh sach vua nhap: ";
-    duyet(head);
-    cout << "\nNhap gia tri can tim de chen: ";
-    cin >> x;
-    cout << "Nhap gia tri can chen: ";
-    cin >> y;
-    chenptu(head, n, x, y);
-    cout << "Danh sach sau khi chen: ";
-    duyet(head);
-    cout << "\nSo node co trong danh sach: " << countNode(head, n);
-    cout << "\nNhap vi tri k: ";
-    cin >> k;
-    int res = valueK(head, k);
-    if (res != -1) {
-        cout << "Gia tri node thu " << k << ": " << res << endl;
-    } else {
-        cout << "Khong tim thay gia tri node thu " << k << endl;
-    }
-    cout << "Phan tu nho nhat trong danh sach la: " << findMin(head) << endl;
-    cout << "Nhap phan tu can xoa: ";
-    cin >> z;
-    deleteFirst(head, z);
-    cout << "Danh sach sau khi xoa la: "
-    duyet(head);
+    struct Node* head = NULL;
+    int choice, x, y, k, z;
+    int res;
+    do {
+        printf("------ MENU ------\n");
+        printf("1. Them phan tu\n");
+        printf("2. Chen phan tu\n");
+        printf("3. In danh sach\n");
+        printf("4. Dem so phan tu\n");
+        printf("5. Tim gia tri tai vi tri k\n");
+        printf("6. Tim phan tu nho nhat\n");
+        printf("7. Xoa phan tu\n");
+        printf("8. Sap xep tang dan\n");
+        printf("0. Thoat\n");
+        printf("Nhap lua chon: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                insertList(&head);
+                break;
+            case 2:
+                printf("Nhap gia tri can tim de chen: ");
+                scanf("%d", &x);
+                printf("Nhap gia tri can chen: ");
+                scanf("%d", &y);
+                chenptu(&head, x, y);
+                break;
+            case 3:
+                printf("Danh sach: ");
+                duyet(head);
+                printf("\n");
+                break;
+            case 4:
+                printf("So node co trong danh sach: %d\n", countNode(head));
+                break;
+            case 5:
+                printf("Nhap vi tri k: ");
+                scanf("%d", &k);
+                res = valueK(head, k);
+                if (res != -1) {
+                    printf("Gia tri node thu %d: %d\n", k, res);
+                } else {
+                    printf("Khong tim thay gia tri node thu %d\n", k);
+                }
+                break;
+            case 6:
+                printf("Phan tu nho nhat trong danh sach la: %d\n", findMin(head));
+                break;
+            case 7:
+                printf("Nhap phan tu can xoa: ");
+                scanf("%d", &z);
+                deleteFirst(&head, z);
+                printf("Danh sach sau khi xoa la: ");
+                duyet(head);
+                printf("\n");
+                break;
+            case 8:
+                sort(head);
+                printf("Danh sach duoc sap xep tang dan: ");
+                duyet(head);
+                printf("\n");
+                break;
+            case 0:
+                printf("Ket thuc chuong trinh.\n");
+                break;
+            default:
+                printf("Lua chon khong hop le. Vui long chon lai.\n");
+        }
+    } while (choice != 0);
+
     // Giai phong bo nho
     while (head) {
-        node *temp = head;
+        struct Node* temp = head;
         head = head->next;
-        delete temp;
+        free(temp);
     }
 
     return 0;
