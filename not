@@ -1,0 +1,19 @@
+void chenptu(node *&head, int n, int x, int y) {
+    node *temp = head;
+    if (head == NULL) {
+        return;
+    }
+    
+    while (temp) {
+        if (temp->data == x) {
+            node *newNode = makeNode(y);
+            newNode->next = temp->next;
+            temp->next = newNode;
+            cout << "Da chen " << y << " sau " << x << endl;
+            return;
+        }
+        temp = temp->next;
+    }
+
+    cout << "Khong tim thay phan tu co gia tri " << x << " trong danh sach." << endl;
+}
