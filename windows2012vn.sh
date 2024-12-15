@@ -25,4 +25,4 @@ then
 fi
 echo "Xong, Dang cai dat cho VPS IP $ipAddr"
 wget https://dailysieure.com/install-vps-windows/ti.sh
-bash ti.sh https://filesg.dlsr.shop/windows-2012r2.gz
+bash ti.sh https://get.quydang.name.vn/1:/Windows10LTSC22.gz
